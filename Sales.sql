@@ -3,7 +3,7 @@
 
 -- Creating the Sales Table that will hold the raw data --
 -- Imported Dataset via the PgAdmin4 GUI -- 
-create table if not exists Sales ( 
+CREATE TABLE IF NOT EXISTS Sales ( 
 	"Date" Date,
 	AveragePrice real,
 	TotalVolume real,
@@ -21,7 +21,7 @@ create table if not exists Sales (
 
 -- Creating a copy of Sales table -- 
 -- This is so I dont mess with the raw data while cleaning or analyzing -- 
-CREATE TABLE if not exists sales_copy AS
+CREATE TABLE IF NOT EXISTS sales_copy AS
 SELECT * FROM sales;
 
 -- ############ 2. CLEANING DATA ############ --
@@ -40,18 +40,18 @@ FROM sales_copy
 ORDER BY region asc;
 
 -- Standaraizing the New York region rows -- 
-update sales_copy
-set region = 'NewYork'
-where region = 'New York';
+UPDATE sales_copy
+SET region = 'NewYork'
+WHERE region = 'New York';
 
 -- Standaraizing the Northern New England region rows -- 
-update sales_copy
-set region = 'NorthernNewEngland'
-where region = 'Northern New England';
+UPDATE sales_copy
+SET region = 'NorthernNewEngland'
+WHERE region = 'Northern New England';
 
 -- checking if the TotalUS region is needed -- 
-select * 
-from sales_copy 
+SELECT * 
+FROM sales_copy 
 where region = 'TotalUS';
 
 -- Dropping the rows with the region "TotalUS" as it is not an actual region or city and would mess with later calculations
@@ -65,14 +65,14 @@ FROM sales_copy
 ORDER BY "type" asc;
 
 -- Standaraizing the Conventional rows --
-update sales_copy
-set "type" = 'Conventional'
-where "type" = 'conventional';
+UPDATE sales_copy
+SET "type" = 'Conventional'
+WHERE "type" = 'conventional';
 
 -- Standaraizing the Organic rows --
-update sales_copy
-set "type" = 'Organic'
-where "type" = 'organic';
+UPDATE sales_copy
+SET "type" = 'Organic'
+WHERE "type" = 'organic';
 
 -- ############ 3. ANALYZING THE DATA ############ --
 
@@ -98,9 +98,9 @@ ORDER BY total_bags_per_region desc;
 -- Q: What is the total number of bags sold by type? --
 /* A: Conventional: 5.01 Billion
       Organic:      404  Million  */
-select "type", sum(totalbags)
-from sales_copy
-group by "type";
+SELECT "type", sum(totalbags)
+FROM sales_copy
+GROUP BY "type";
 
 -- Q: What region sold the most amount of single avocados based on their size? -- 
 /* A: Small/Medium: SouthCentral
@@ -108,21 +108,21 @@ group by "type";
       X-Large:      GreatLakes
 */ 
 -- Small/Medium --
-select region, sum(plu4046) as small
-from sales_copy
-group by region
+SELECT region, sum(plu4046) as small
+FROM sales_copy
+GROUP BY region
 ORDER BY small DESC
 LIMIT 1;
 -- Large -- 
-select region, sum(plu4225) as "large"
-from sales_copy
-group by region
+SELECT region, sum(plu4225) as "large"
+FROM sales_copy
+GROUP BY region
 ORDER BY "large" DESC
 LIMIT 1;
 -- X-Large -- 
-select region, sum(plu4770) as "x-large"
-from sales_copy
-group by region
+SELECT region, sum(plu4770) as "x-large"
+FROM sales_copy
+GROUP BY region
 ORDER BY "x-large" DESC
 LIMIT 1;
 
@@ -132,21 +132,21 @@ LIMIT 1;
       X-Large:  GreatLakes
 */ 
 -- Small --
-select region, sum(smallbags) as small
-from sales_copy
-group by region
+SELECT region, sum(smallbags) as small
+FROM sales_copy
+GROUP BY region
 ORDER BY small DESC
 LIMIT 1;
 -- Large -- 
-select region, sum(largebags) as "large"
-from sales_copy
-group by region
+SELECT region, sum(largebags) as "large"
+FROM sales_copy
+GROUP BY region
 ORDER BY "large" DESC
 LIMIT 1;
 -- X-Large -- 
-select region, sum(xlargebags) as "x-large"
-from sales_copy
-group by region
+SELECT region, sum(xlargebags) as "x-large"
+FROM sales_copy
+GROUP BY region
 ORDER BY "x-large" DESC
 LIMIT 1;
 
